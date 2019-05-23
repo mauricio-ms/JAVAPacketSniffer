@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: jnetpcap:jnetpcap:1.4.r1425-1g">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/jnetpcap/jnetpcap/1.4.r1425-1g/jnetpcap-1.4.r1425-1g.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/jnetpcap/jnetpcap/1.4.r1425-1g/jnetpcap-1.4.r1425-1g-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/jnetpcap/jnetpcap/1.4.r1425-1g/jnetpcap-1.4.r1425-1g-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

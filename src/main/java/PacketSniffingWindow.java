@@ -36,6 +36,7 @@ public class PacketSniffingWindow extends Application {
     private static ObservableList<TableColumns> data= FXCollections.observableArrayList();
     private static int packetNo=0;
     TextArea packetProtocolDetails=new TextArea();TextArea packetDataField=new TextArea();
+
     public PacketSniffingWindow(int index1) throws Exception {
         networkInterfaceIndex=index1;
         start(new Stage());
