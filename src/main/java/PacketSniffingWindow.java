@@ -18,6 +18,7 @@ import org.jnetpcap.packet.format.FormatUtils;
 import org.jnetpcap.protocol.lan.Ethernet;
 import org.jnetpcap.protocol.network.Arp;
 import org.jnetpcap.protocol.network.Ip4;
+import org.jnetpcap.protocol.network.Ip6;
 import org.jnetpcap.protocol.sigtran.Sctp;
 import org.jnetpcap.protocol.tcpip.Tcp;
 import org.jnetpcap.protocol.tcpip.Udp;
@@ -148,7 +149,8 @@ public class PacketSniffingWindow extends Application {
     }
 
     private void printInfo(Integer packetLength) {
-        Ip4 ip = new Ip4();
+        Ip4 ip4 = new Ip4();
+        Ip6 ip6 = new Ip6();
         Ethernet eth = new Ethernet();
         Tcp tcp = new Tcp();
         Udp udp = new Udp();
@@ -159,11 +161,18 @@ public class PacketSniffingWindow extends Application {
         PcapPacket pcappacket=packets.get(packetLength);
         packetDataField.clear();packetProtocolDetails.clear();
         packetDataField.setText(pcappacket.toHexdump());
-        if (pcappacket.hasHeader(ip)) {
-            if (pcappacket.hasHeader(ip)) {
-                packetProtocolDetails.appendText("IP type:\t" + ip.typeEnum()+"\n");
-                packetProtocolDetails.appendText("IP src:\t-\t" + FormatUtils.ip(ip.source())+"\n");
-                packetProtocolDetails.appendText("IP dst:\t-\t" + FormatUtils.ip(ip.destination())+"\n");
+        if (pcappacket.hasHeader(ip4)) {
+            if (pcappacket.hasHeader(ip4)) {
+                packetProtocolDetails.appendText("IP type:\t" + ip4.typeEnum()+"\n");
+                packetProtocolDetails.appendText("IP src:\t-\t" + FormatUtils.ip(ip4.source())+"\n");
+                packetProtocolDetails.appendText("IP dst:\t-\t" + FormatUtils.ip(ip4.destination())+"\n");
+                readdata = true;
+            }
+        } else if(pcappacket.hasHeader(ip6)) {
+            if (pcappacket.hasHeader(ip6)) {
+                packetProtocolDetails.appendText("IP type:\t" + ip6.version()+"\n");
+                packetProtocolDetails.appendText("IP src:\t-\t" + FormatUtils.ip(ip6.source())+"\n");
+                packetProtocolDetails.appendText("IP dst:\t-\t" + FormatUtils.ip(ip6.destination())+"\n");
                 readdata = true;
             }
         }
@@ -232,11 +241,17 @@ public class PacketSniffingWindow extends Application {
         packets.add(packet);
         byte[] data1 = packet.getByteArray(0, packet.size()); // the package data
         String hexDump=packet.toHexdump();
-        Ip4 ip = new Ip4();
+        Ip4 ip4 = new Ip4();
         String sourceIP="-";String destinationIP="-";
-        if (packet.hasHeader(ip) == true) {
-            sourceIP = org.jnetpcap.packet.format.FormatUtils.ip(ip.source());
-            destinationIP = org.jnetpcap.packet.format.FormatUtils.ip(ip.destination());
+        if (packet.hasHeader(ip4) == true) {
+            sourceIP = org.jnetpcap.packet.format.FormatUtils.ip(ip4.source());
+            destinationIP = org.jnetpcap.packet.format.FormatUtils.ip(ip4.destination());
+        } else {
+            Ip6 ip6 = new Ip6();
+            if (packet.hasHeader(ip6) == true) {
+                sourceIP = org.jnetpcap.packet.format.FormatUtils.ip(ip6.source());
+                destinationIP = org.jnetpcap.packet.format.FormatUtils.ip(ip6.destination());
+            }
         }
         data.add(new TableColumns(packetNo++,sourceIP,destinationIP,
                 getProtocol(packet),packet.getCaptureHeader().caplen(),"info"));
