@@ -1,9 +1,5 @@
 package br.com.javapacketsniffer;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import br.com.javapacketsniffer.view.PacketSniffingWindow;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -13,6 +9,10 @@ import org.jnetpcap.PcapDumper;
 import org.jnetpcap.PcapIf;
 import org.jnetpcap.packet.PcapPacket;
 import org.jnetpcap.packet.PcapPacketHandler;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JNetPCapWork {
 

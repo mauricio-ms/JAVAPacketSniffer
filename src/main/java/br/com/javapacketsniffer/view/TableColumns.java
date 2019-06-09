@@ -2,22 +2,25 @@ package br.com.javapacketsniffer.view;
 
 public class TableColumns {
 
-
     private Integer packetNumber;
+
     private String packetSourceIP;
+
     private String packetDestinationIP;
+
     private String packetProtocol;
+
     private Integer packetLength;
+
     private String packetInfo;
 
-
-    public TableColumns(Integer packetNumber,String packetSourceIP,String packetDestinationIP,String packetProtocol,int packetLength,String packetInfo){
-        this.packetNumber=packetNumber;
-        this.packetSourceIP=packetSourceIP;
-        this.packetDestinationIP=packetDestinationIP;
-        this.packetProtocol=packetProtocol;
-        this.packetLength=packetLength;
-        this.packetInfo=packetInfo;
+    public TableColumns(Integer packetNumber, String packetSourceIP, String packetDestinationIP, String packetProtocol, int packetLength, String packetInfo) {
+        this.packetNumber = packetNumber;
+        this.packetSourceIP = packetSourceIP;
+        this.packetDestinationIP = packetDestinationIP;
+        this.packetProtocol = packetProtocol;
+        this.packetLength = packetLength;
+        this.packetInfo = packetInfo;
     }
 
 
