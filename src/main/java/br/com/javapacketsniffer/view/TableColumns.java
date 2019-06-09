@@ -1,3 +1,5 @@
+package br.com.javapacketsniffer.view;
+
 public class TableColumns {
 
 

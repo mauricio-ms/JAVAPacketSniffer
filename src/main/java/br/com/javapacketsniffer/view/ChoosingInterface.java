@@ -1,4 +1,6 @@
+package br.com.javapacketsniffer.view;
 
+import br.com.javapacketsniffer.JNetPCapWork;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,8 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
-import java.util.ArrayList;
 
 public class ChoosingInterface extends Application {
     private Stage window;

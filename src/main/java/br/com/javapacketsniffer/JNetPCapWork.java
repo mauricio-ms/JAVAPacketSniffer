@@ -1,7 +1,10 @@
+package br.com.javapacketsniffer;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.javapacketsniffer.view.PacketSniffingWindow;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.jnetpcap.Pcap;
@@ -10,7 +13,6 @@ import org.jnetpcap.PcapDumper;
 import org.jnetpcap.PcapIf;
 import org.jnetpcap.packet.PcapPacket;
 import org.jnetpcap.packet.PcapPacketHandler;
-import org.jnetpcap.protocol.network.Ip4;
 
 public class JNetPCapWork {
 

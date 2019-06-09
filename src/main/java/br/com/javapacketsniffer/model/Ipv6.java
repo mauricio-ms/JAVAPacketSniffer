@@ -1,3 +1,5 @@
+package br.com.javapacketsniffer.model;
+
 public class Ipv6 {
 
     private final byte[] packet;

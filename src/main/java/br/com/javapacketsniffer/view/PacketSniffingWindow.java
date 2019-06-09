@@ -1,3 +1,6 @@
+package br.com.javapacketsniffer.view;
+
+import br.com.javapacketsniffer.JNetPCapWork;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
