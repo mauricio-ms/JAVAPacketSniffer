@@ -1,6 +1,7 @@
 package br.com.javapacketsniffer.view;
 
 import br.com.javapacketsniffer.JNetPCapWork;
+import br.com.javapacketsniffer.model.Ipv6;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -186,18 +187,22 @@ public class PacketSniffingWindow extends Application {
         packetDataField.setText(pcappacket.toHexdump());
         if (pcappacket.hasHeader(ip4)) {
             if (pcappacket.hasHeader(ip4)) {
-                packetProtocolDetails.appendText("IP type:\t" + ip4.typeEnum() + "\n");
+                packetProtocolDetails.appendText("IP version:\t" + ip4.typeEnum() + "\n");
                 packetProtocolDetails.appendText("IP src:\t-\t" + FormatUtils.ip(ip4.source()) + "\n");
                 packetProtocolDetails.appendText("IP dst:\t-\t" + FormatUtils.ip(ip4.destination()) + "\n");
                 readData = true;
             }
         } else if (pcappacket.hasHeader(ip6)) {
-            if (pcappacket.hasHeader(ip6)) {
-                packetProtocolDetails.appendText("IP type:\t" + ip6.version() + "\n");
-                packetProtocolDetails.appendText("IP src:\t-\t" + FormatUtils.ip(ip6.source()) + "\n");
-                packetProtocolDetails.appendText("IP dst:\t-\t" + FormatUtils.ip(ip6.destination()) + "\n");
-                readData = true;
-            }
+            Ipv6 ipv6 = new Ipv6(pcappacket.getByteArray(0, pcappacket.size()));
+            packetProtocolDetails.appendText("IP version:\t" + ipv6.getVersion() + "\n");
+            packetProtocolDetails.appendText("IP traffic class:\t" + ipv6.getTrafficClass() + "\n");
+            packetProtocolDetails.appendText("IP flow label\t" + ipv6.getFlowLabel() + "\n");
+            packetProtocolDetails.appendText("IP length:\t" + ipv6.getLength() + "\n");
+            packetProtocolDetails.appendText("IP next header:\t" + ipv6.getNextHeader() + "\n");
+            packetProtocolDetails.appendText("IP hop limit:\t" + ipv6.getHopLimit() + "\n");
+            packetProtocolDetails.appendText("IP source:\t-\t" + FormatUtils.ip(ip6.source()) + "\n");
+            packetProtocolDetails.appendText("IP destination:\t-\t" + FormatUtils.ip(ip6.destination()) + "\n");
+            readData = true;
         }
         if (pcappacket.hasHeader(eth) && readData) {
             packetProtocolDetails.appendText("Ethernet type:\t" + eth.typeEnum() + "\n");
@@ -253,8 +258,6 @@ public class PacketSniffingWindow extends Application {
 
     public static void sendDataToUI(PcapPacket packet) {
         packets.add(packet);
-        byte[] data1 = packet.getByteArray(0, packet.size()); // the package data
-        String hexDump = packet.toHexdump();
         Ip4 ip4 = new Ip4();
         String sourceIP = "-";
         String destinationIP = "-";
@@ -264,25 +267,14 @@ public class PacketSniffingWindow extends Application {
         } else {
             Ip6 ip6 = new Ip6();
             if (packet.hasHeader(ip6)) {
-                final byte[] first = packet.getByteArray(0, 16);
-
-                int sumFirst = 0;
-
-                for (int i = 0; i < first.length; i++) {
-                    sumFirst += first[i];
-                }
-
-                System.out.println(Integer.toHexString(sumFirst));
-
-                System.out.println(FormatUtils.hexdump(first));
-                sourceIP = org.jnetpcap.packet.format.FormatUtils.ip(ip6.source());
-                destinationIP = org.jnetpcap.packet.format.FormatUtils.ip(ip6.destination());
+                final byte[] packageData = packet.getByteArray(0, packet.size());
+                final Ipv6 ipv6 = new Ipv6(packageData);
+                sourceIP = ipv6.getSourceAddressFormatted();
+                destinationIP = ipv6.getDestinationAddressFormatted();
             }
         }
         data.add(new TableColumns(packetNo++, sourceIP, destinationIP,
                 getProtocol(packet), packet.getCaptureHeader().caplen(), "info"));
-
-
     }
 
     private static String getProtocol(PcapPacket packet) {

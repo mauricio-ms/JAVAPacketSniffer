@@ -17,7 +17,6 @@ import java.util.List;
 public class JNetPCapWork {
 
     private static List<PcapIf> allDevs;
-    private static String n;
     private static StringBuilder errbuf;
     private static Pcap pcap;
     private static Thread t1;
@@ -25,13 +24,13 @@ public class JNetPCapWork {
     private static int optimize = 0;         // 0 = false
     private static int netmask = 0xFFFFFF00; // 255.255.255.0
 
-    public static ArrayList<String> fetchAvailableInterfaces(){
-        allDevs = new ArrayList<PcapIf>(); // Will be filled with NICs
-        ArrayList<String> returnArrayList=new ArrayList<>();
+    public static ArrayList<String> fetchAvailableInterfaces() {
+        allDevs = new ArrayList<>(); // Will be filled with NICs
+        ArrayList<String> returnArrayList = new ArrayList<>();
         errbuf = new StringBuilder(); // For any error msgs
         int r = Pcap.findAllDevs(allDevs, errbuf);
         if (r != Pcap.OK || allDevs.isEmpty()) {
-            returnArrayList.add("Can't read list of devices, error is "+
+            returnArrayList.add("Can't read list of devices, error is " +
                     errbuf.toString());
             return returnArrayList;
         }
@@ -39,16 +38,17 @@ public class JNetPCapWork {
         for (PcapIf device : allDevs) {
             String description = (device.getDescription() != null) ? device
                     .getDescription() : "No description available";
-            returnArrayList.add("#"+i+" "+device.getName()+" ["+description+"]");i++;
+            returnArrayList.add("#" + i + " " + device.getName() + " [" + description + "]");
+            i++;
         }
         return returnArrayList;
     }
 
-    public static void capturePackets(int networkInterfaceIndex,String filterExpression){
+    public static void capturePackets(int networkInterfaceIndex, String filterExpression) {
         PcapIf device = allDevs.get(networkInterfaceIndex);
         int snaplen = 64 * 1024; // Capture all packets, no trucation
         int flags = Pcap.MODE_PROMISCUOUS; // capture all packets
-        int timeout = 10 ; // 10 seconds in millis
+        int timeout = 10; // 10 seconds in millis
         pcap = Pcap.openLive(device.getName(), snaplen, flags, timeout, errbuf);
         if (pcap == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error while opening device for capture: "
@@ -62,7 +62,7 @@ public class JNetPCapWork {
 
         if (!filterExpression.equals("")) {
             if (pcap.compile(program, filterExpression, optimize, netmask) != Pcap.OK) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, pcap.getErr()+ " , not a valid expression", ButtonType.OK);
+                Alert alert = new Alert(Alert.AlertType.ERROR, pcap.getErr() + " , not a valid expression", ButtonType.OK);
                 alert.showAndWait();
                 if (alert.getResult() == ButtonType.OK) {
                     alert.close();
@@ -88,7 +88,8 @@ public class JNetPCapWork {
             }
         };
         t1 = new Thread(new Runnable() {
-            private volatile boolean stopSniffing=false;
+            private volatile boolean stopSniffing = false;
+
             public void run() {
                 pcap.loop(pcap.LOOP_INFINITE, jpacketHandler, "jNetPcap");
                 File file = new File(ofile);
@@ -104,7 +105,7 @@ public class JNetPCapWork {
         t1.start();
     }
 
-    public static void stopSniffing(){
+    public static void stopSniffing() {
         pcap.breakloop();
     }
 
