@@ -1,6 +1,7 @@
 package br.com.javapacketsniffer.view;
 
 import br.com.javapacketsniffer.JNetPCapWork;
+import br.com.javapacketsniffer.model.Header;
 import br.com.javapacketsniffer.model.Ipv6;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -28,6 +29,7 @@ import org.jnetpcap.protocol.tcpip.Tcp;
 import org.jnetpcap.protocol.tcpip.Udp;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class PacketSniffingWindow extends Application {
@@ -197,11 +199,16 @@ public class PacketSniffingWindow extends Application {
             packetProtocolDetails.appendText("IP version:\t" + ipv6.getVersion() + "\n");
             packetProtocolDetails.appendText("IP traffic class:\t" + ipv6.getTrafficClass() + "\n");
             packetProtocolDetails.appendText("IP flow label\t" + ipv6.getFlowLabel() + "\n");
-            packetProtocolDetails.appendText("IP length:\t" + ipv6.getLength() + "\n");
+            packetProtocolDetails.appendText("Payload length:\t" + ipv6.getLength() + "\n");
             packetProtocolDetails.appendText("IP next header:\t" + ipv6.getNextHeader() + "\n");
             packetProtocolDetails.appendText("IP hop limit:\t" + ipv6.getHopLimit() + "\n");
             packetProtocolDetails.appendText("IP source:\t-\t" + FormatUtils.ip(ip6.source()) + "\n");
             packetProtocolDetails.appendText("IP destination:\t-\t" + FormatUtils.ip(ip6.destination()) + "\n");
+            List<Header> extensionHeaders = ipv6.getExtensionHeaders();
+            if (!extensionHeaders.isEmpty()) {
+                packetProtocolDetails.appendText("Cabeçalhos de extensão:\n");
+                extensionHeaders.forEach(eh -> packetProtocolDetails.appendText(eh.getDescription() + "\n"));
+            }
             readData = true;
         }
         if (pcappacket.hasHeader(eth) && readData) {
@@ -269,6 +276,7 @@ public class PacketSniffingWindow extends Application {
             if (packet.hasHeader(ip6)) {
                 final byte[] packageData = packet.getByteArray(0, packet.size());
                 final Ipv6 ipv6 = new Ipv6(packageData);
+                System.out.println("Next Header: " + ipv6.getNextHeader());
                 sourceIP = ipv6.getSourceAddressFormatted();
                 destinationIP = ipv6.getDestinationAddressFormatted();
             }
@@ -341,6 +349,18 @@ public class PacketSniffingWindow extends Application {
             }
         } else if (packet.hasHeader(sctp)) {
             return "SCTP";
+        }
+        final Ip6 ip6 = new Ip6();
+        if (packet.hasHeader(ip6)) {
+            final Ipv6 ipv6 = new Ipv6(packet.getByteArray(0, packet.size()));
+            final int nextHeader = ipv6.getNextHeader();
+            if (nextHeader == 6) {
+                return ">> TCP";
+            } else if (nextHeader == 17) {
+                return ">> UDP";
+            } else if (nextHeader == 58) {
+                return "ICMPv6";
+            }
         }
         return "unknown";
     }
